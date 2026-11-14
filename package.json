@@ -1,0 +1,11 @@
+{
+  "name": "evm-project-board",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "挣值管理项目看板 — 预算、计划进度、实际完成、成本与预测",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "serve": "node scripts/serve.mjs"
+  }
+}

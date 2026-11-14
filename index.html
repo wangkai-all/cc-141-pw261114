@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>挣值项目看板 · 计划价值 / 挣值 / 实际成本</title>
+  <link rel="stylesheet" href="src/styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <header class="app-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>挣值项目看板</span>
+    </div>
+    <div class="header-actions">
+      <span class="header-note">截止日期口径 · 工作包计量 · 双日期成本</span>
+      <button type="button" class="icon-button" id="themeToggle" aria-label="切换深色模式">
+        <span class="theme-icon" aria-hidden="true">◐</span>
+        <span id="themeLabel">深色</span>
+      </button>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="project-head" aria-labelledby="projectName">
+      <div>
+        <p class="eyebrow" id="sampleLabel">样本</p>
+        <h1 id="projectName">项目</h1>
+        <p class="project-meta" id="projectMeta"></p>
+      </div>
+      <p class="project-desc" id="projectDesc"></p>
+    </section>
+
+    <section class="controls" aria-label="报表范围">
+      <label class="control">
+        <span>项目样本</span>
+        <select id="sampleSelect"></select>
+      </label>
+      <label class="control">
+        <span>截止日期</span>
+        <input type="date" id="asOf">
+      </label>
+      <div class="control">
+        <span id="costModeLabel">成本口径</span>
+        <div class="segmented" role="group" aria-labelledby="costModeLabel">
+          <button type="button" data-cost-mode="as-known" aria-pressed="true">当时已知</button>
+          <button type="button" data-cost-mode="current" aria-pressed="false">当前更正</button>
+        </div>
+      </div>
+      <label class="control">
+        <span>计划基线</span>
+        <select id="baselineSelect"></select>
+      </label>
+      <p class="control-note" id="controlNote" role="status"></p>
+    </section>
+
+    <section class="kpis" id="kpis" aria-label="项目关键指标"></section>
+
+    <section class="card chart-card" aria-labelledby="chartTitle">
+      <header class="card-head">
+        <div>
+          <h2 id="chartTitle">累计计划价值、挣值与实际成本</h2>
+          <p class="card-sub" id="chartSub">金额单位：万元 · 实际观测截至所选截止日期</p>
+        </div>
+        <div class="legend" id="chartLegend" aria-label="图例"></div>
+      </header>
+      <div class="chart-shell" id="chartShell">
+        <div class="chart-canvas" id="chart"></div>
+        <div class="chart-tooltip" id="chartTooltip" role="status" hidden></div>
+      </div>
+      <div class="chart-foot">
+        <p class="chart-note" id="chartNote"></p>
+        <button type="button" class="text-button" id="chartViewToggle" aria-expanded="false" aria-controls="chartTableWrap">表格视图</button>
+      </div>
+      <div class="chart-table-wrap" id="chartTableWrap" hidden>
+        <table class="data-table compact" id="chartTable">
+          <caption class="sr-only">按截止日期前后的曲线数据</caption>
+        </table>
+      </div>
+    </section>
+
+    <div class="two-col">
+      <section class="card" aria-labelledby="baselineTitle">
+        <header class="card-head">
+          <div>
+            <h2 id="baselineTitle">计划基线对照</h2>
+            <p class="card-sub">调整范围或预算时保存新基线；旧基线的预算与日期保持原样。</p>
+          </div>
+        </header>
+        <div id="baselinePanel"></div>
+      </section>
+
+      <section class="card" aria-labelledby="forecastTitle">
+        <header class="card-head">
+          <div>
+            <h2 id="forecastTitle">完工成本预测</h2>
+            <p class="card-sub">预测写明假设；剩余成本可调整，形成独立情景。</p>
+          </div>
+        </header>
+        <div id="forecastPanel"></div>
+      </section>
+    </div>
+
+    <section class="card table-card" aria-labelledby="packageTitle">
+      <header class="card-head">
+        <div>
+          <h2 id="packageTitle">工作包明细</h2>
+          <p class="card-sub">点击项目汇总展开工作包；点击工作包查看计量方式、里程碑或数量记录与原始成本记录。父级金额只由底层工作包汇总。</p>
+        </div>
+        <div class="table-actions">
+          <button type="button" class="text-button" id="expandAll">全部展开</button>
+          <button type="button" class="text-button" id="collapseAll">全部收起</button>
+        </div>
+      </header>
+      <div class="table-scroll">
+        <table class="data-table package-table" id="packageTable">
+          <caption class="sr-only">工作包预算、计划价值、挣值、实际成本与偏差</caption>
+        </table>
+      </div>
+      <p class="footnote">金额单位：元。CPI、SPI 仅在分子分母均有定义时显示；零挣值、零成本与未开工工作包以状态说明，不输出效率比值。</p>
+    </section>
+
+    <section class="card corrections-card" aria-labelledby="correctionsTitle" id="correctionsCard">
+      <header class="card-head">
+        <div>
+          <h2 id="correctionsTitle">成本补录与口径</h2>
+          <p class="card-sub">成本按实际发生日期与登记日期分别保存，两种口径互不覆盖。</p>
+        </div>
+      </header>
+      <div id="correctionsPanel"></div>
+    </section>
+
+    <footer class="app-footer">
+      <p>挣值 = 工作包预算 × 事先设定的计量完成比例，不用成本替代进度。所有金额为演示数据。</p>
+    </footer>
+  </main>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
